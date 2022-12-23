@@ -1,0 +1,77 @@
+package postgresclient
+
+// According to opinion of different people pgx is very fast
+
+// "github.com/jackc/pgx/v5"
+// "github.com/jackc/pgconn"
+import (
+	"context"
+	"fmt"
+	"log"
+	"time"
+
+	//"github.com/jackc/pgconn"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/spf13/viper"
+)
+
+const (
+	maxAttempts = 5 // amount of tries to connect to DB
+)
+
+// Note: Define interface in a place you want to use it.
+type Client interface {
+	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
+	// Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
+	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
+	QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
+	Begin(ctx context.Context) (pgx.Tx, error)
+}
+
+// Connect to postgresql server.
+// Trying to connect several times.
+func NewClient(ctx context.Context, retries int) (*pgxpool.Pool, error) {
+	var pool *pgxpool.Pool
+	var err error
+	// make connection string
+	dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s",
+		viper.GetString("postgresql.user"),
+		viper.GetString("postgresql.password"),
+		viper.GetString("postgresql.host"),
+		viper.GetString("postgresql.port"),
+		viper.GetString("postgresql.db"),
+	)
+
+	// try to connect to DB
+	err = DoWithtries(func() error {
+		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+		defer cancel()
+
+		pool, err = pgxpool.New(ctx, dsn)
+		if err != nil {
+			return err
+		}
+		return nil
+	}, retries, 5*time.Second)
+	if err != nil {
+		log.Fatal("Error: could not connect to database...")
+	}
+
+	return pool, nil
+}
+
+func DoWithtries(fn func() error, attempts int, delay time.Duration) (err error) {
+	for attempts > 0 {
+		if err := fn(); err != nil {
+			time.Sleep(delay)
+			attempts -= 1
+			continue
+		}
+		// go out of loop in case no errors
+		return nil
+	}
+
+	return err
+}
