@@ -36,11 +36,13 @@ type Album struct {
 }
 
 // albumsByArtist queries for albums that have the specified artist name.
+// !!! mysql use ? as parameter placeholder
+// !!! postgresql use $1 $2 ...
 func AlbumsByArtist(name string, db *sql.DB) ([]Album, error) {
 	// An albums slice to hold data from returned rows.
 	var albums []Album
 
-	rows, err := db.Query("SELECT * FROM album WHERE artist = ?", name)
+	rows, err := db.Query("SELECT * FROM album WHERE artist = $1", name)
 	if err != nil {
 		log.Println(err)
 		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
@@ -65,7 +67,7 @@ func AlbumByID(id int64, db *sql.DB) (Album, error) {
 	// An album to hold data from the returned row.
 	var alb Album
 
-	row := db.QueryRow("SELECT * FROM album WHERE id = ?", id)
+	row := db.QueryRow("SELECT * FROM album WHERE id = $1", id)
 	if err := row.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price); err != nil {
 		if err == sql.ErrNoRows {
 			return alb, fmt.Errorf("albumsById %d: no such album", id)
@@ -78,11 +80,8 @@ func AlbumByID(id int64, db *sql.DB) (Album, error) {
 // addAlbum adds the specified album to the database,
 // returning the album ID of the new entry
 func AddAlbum(alb Album, db *sql.DB) (int64, error) {
-	result, err := db.Exec("INSERT INTO album (title, artist, price) VALUES (?, ?, ?)", alb.Title, alb.Artist, alb.Price)
-	if err != nil {
-		return 0, fmt.Errorf("addAlbum: %v", err)
-	}
-	id, err := result.LastInsertId()
+	var id int64
+	err := db.QueryRow("INSERT INTO album (title, artist, price) VALUES ($1, $2, $3) RETURNING id", alb.Title, alb.Artist, alb.Price).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("addAlbum: %v", err)
 	}
