@@ -26,7 +26,7 @@ func ConnectDB() *sql.DB {
 	// Get a database handle.
 	DB, err := sql.Open("postgres", cfg)
 	CheckError(err)
-	defer DB.Close()
+	// defer DB.Close()
 
 	err = DB.Ping()
 	CheckError(err)
