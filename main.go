@@ -8,11 +8,13 @@ import (
 	"wcrm2/config"
 	t_model "wcrm2/model"
 	t_sql "wcrm2/pkg/client/postgresclient"
+	"wcrm2/router/gmax"
 	// t_sql "wcrm2/pkg/client/mysql"
 )
 
 var (
 	db *sql.DB
+	s  gmax.APIServer
 )
 
 func init() {
@@ -23,9 +25,21 @@ func init() {
 
 	// Get a database handle.
 	db = t_sql.ConnectDB()
+	s := gmax.S
+
+	s.StartServer()
 }
 
 func main() {
+	// check DB connection and schema
+	checkDB()
+
+	// start http server
+
+}
+
+// Check db and tables exist with required data
+func checkDB() {
 	albums, err := t_model.AlbumsByArtist("John Coltrane", db)
 	if err != nil {
 		log.Fatal(err)

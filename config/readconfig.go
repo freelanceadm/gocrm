@@ -15,6 +15,7 @@ var (
 func ReadConfig() error {
 	viper.AddConfigPath("./config")
 	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
 
 	return viper.ReadInConfig()
 }

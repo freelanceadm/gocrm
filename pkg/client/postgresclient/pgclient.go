@@ -13,6 +13,11 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+// TODO: create interface create, getone, getmany, update, delete = CRUD
+
+// Make scruct which applies this interface to work with DB
+
+// It is like a class constructor
 func ConnectDB() *sql.DB {
 	// Capture connection properties.
 

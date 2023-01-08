@@ -15,3 +15,7 @@
 
 - JWT/OATH2/keycloak 
 
+# Done
+* add MUX router 
+* add /health handler
+* add DB connection

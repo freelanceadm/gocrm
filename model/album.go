@@ -48,6 +48,7 @@ func AlbumsByArtist(name string, db *sql.DB) ([]Album, error) {
 		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
 	}
 	defer rows.Close()
+
 	// Loop through rows, using Scan to assign column data to struct fields.
 	for rows.Next() {
 		var alb Album
@@ -74,6 +75,7 @@ func AlbumByID(id int64, db *sql.DB) (Album, error) {
 		}
 		return alb, fmt.Errorf("albumsById %d: %v", id, err)
 	}
+
 	return alb, nil
 }
 
