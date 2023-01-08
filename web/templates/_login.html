@@ -1,0 +1,41 @@
+{{ define "signin" }}
+
+<!-- <div class="col-md-offset-4 col-md-4">
+<form class="form-signin" role="form" id="login_form" method="post" action="">
+    <h2 class="form-signin-heading">Вход</h2>
+    <input type="email" class="form-control" placeholder="Email address" required autofocus>
+    <input type="password" class="form-control" placeholder="Password" required>
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" value="remember-me"> Запомнить меня
+        </label>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+</div> -->
+<h1>Contact</h1>
+<form method="POST">
+    <label>email:</label><br />
+    <input type="text" name="email"><br />
+    <label>password:</label><br />
+    <input type="password" name="password"><br />
+    <input type="submit">
+</form>
+
+{{ end }}
+
+{{ define "signup" }}
+<div class="col-md-offset-4 col-md-4">
+<form class="form-signin" role="form">
+    <h2 class="form-signin-heading">Зарегистрироваться</h2>
+    <input type="email" class="form-control" placeholder="Email address" required autofocus>
+    <input type="password" class="form-control" placeholder="Password" required>
+    <input type="password" class="form-control" placeholder="Confirm Password" required>
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" value="agree"> I agree with the Terms of Service *
+        </label>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
+</form>
+</div>
+{{ end }}
