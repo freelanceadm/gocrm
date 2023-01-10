@@ -119,9 +119,11 @@ func CreateDB() error {
 	// switch db connection to required DB
 	// first close current connection
 	sqlDB, err := Db.DB()
+
 	if err != nil {
 		log.Fatal("Error: Could not get sqlDB. ", err)
 	}
+
 	// Close
 	err = sqlDB.Close()
 	if err != nil {

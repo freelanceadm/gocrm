@@ -16,12 +16,6 @@ var (
 	S APIServer
 )
 
-type APIServer struct {
-	r    *mux.Router
-	srv  *http.Server
-	tmpl *template.Template
-}
-
 func init() {
 	// create router
 	S.r = mux.NewRouter()
@@ -37,9 +31,14 @@ func init() {
 
 }
 
+type APIServer struct {
+	r    *mux.Router
+	srv  *http.Server
+	tmpl *template.Template
+}
+
 func (s *APIServer) StartServer() {
 	var err error
-	s.r.HandleFunc("/api/health", apiHealth)
 
 	// serve static files
 	// This will serve files under http://localhost:8000/static/<filename>
@@ -57,6 +56,9 @@ func (s *APIServer) StartServer() {
 	}
 	log.Println(s.tmpl.DefinedTemplates())
 
+	// Handlers
+	s.AddHandlers()
+
 	// make connection string
 	s_addr := fmt.Sprintf("%s:%s", viper.GetString("server.host"), viper.GetString("server.port"))
 	log.Println("Listen on: %s", s_addr)
@@ -72,7 +74,33 @@ func (s *APIServer) StartServer() {
 	log.Fatal(s.srv.ListenAndServe())
 }
 
-func apiHealth(w http.ResponseWriter, r *http.Request) {
+// Add handlers
+func (s *APIServer) AddHandlers() {
+	// Handlers
+	s.r.HandleFunc("/api/health", s.apiHealth)
+	s.r.HandleFunc("/", s.indexHandler)
+
+	// Custom. TODO: add here something from parameters
+	s.r.HandleFunc("/message/", s.messageHandler)
+}
+
+func (s *APIServer) apiHealth(w http.ResponseWriter, r *http.Request) {
 	// an example API handler
 	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+}
+
+func (s *APIServer) indexHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Index handler")
+
+	if err := s.tmpl.ExecuteTemplate(w, "index.html", nil); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (s *APIServer) messageHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("message handler")
+
+	if err := s.tmpl.ExecuteTemplate(w, "index.html", nil); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }

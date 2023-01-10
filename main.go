@@ -9,12 +9,15 @@ import (
 	t_model "wcrm2/model"
 	t_sql "wcrm2/pkg/client/postgresclient"
 	"wcrm2/router/gmax"
+
+	"gorm.io/gorm"
 	// t_sql "wcrm2/pkg/client/mysql"
 )
 
 var (
-	db *sql.DB
-	s  gmax.APIServer
+	db  *sql.DB
+	gdb *gorm.DB
+	s   gmax.APIServer
 )
 
 func init() {
@@ -25,8 +28,13 @@ func init() {
 
 	// Get a database handle.
 	db = t_sql.ConnectDB()
-	s := gmax.S
+	gdb = t_sql.GormConnectDB(db)
 
+	// Migrate schema(s)
+	gdb.AutoMigrate(&t_model.User{}, &t_model.Album{})
+
+	// router and handlers
+	s := gmax.S
 	s.StartServer()
 }
 
