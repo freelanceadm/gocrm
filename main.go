@@ -44,8 +44,24 @@ func main() {
 		Email:        "mail1@mail.ru",
 		PasswordHash: "$1$dkjfngkjrnktjngkrjntgkjrntkj",
 	}
+	users := []t_model.User{
+		{
+			Email:        "mail2@mail.ru",
+			PasswordHash: "$1$dkjfngkjrnktjngkrjntgkjrntkj",
+		},
+		{
+			Email:        "mail3@mail.ru",
+			PasswordHash: "$1$dkjfngkjrnktjngkrjntgkjrntkj",
+		},
+		user,
+	}
+
+	// insert multiple records
+	t_sql.GormCreateBatch(gdb, &users)
+	// insert one record
 	t_sql.GormCreateOne(gdb, &user)
-	//gdb.Create(&user)
+	// update record
+	// delete
 
 	// Start web server
 	s := gmax.S
