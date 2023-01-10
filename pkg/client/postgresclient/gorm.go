@@ -29,7 +29,7 @@ func GormConnectDB(sqlDB *sql.DB) *gorm.DB {
 
 // CRUD GORM functions
 // Create record
-func GormCreate(gdb *gorm.DB, records ...interface{}) {
+func GormCreateOne(gdb *gorm.DB, r interface{}) {
 	// user := User{Name: "Jinzhu", Age: 18, Birthday: time.Now()}
 
 	// result := db.Create(&user) // pass pointer of data to Create
@@ -37,7 +37,11 @@ func GormCreate(gdb *gorm.DB, records ...interface{}) {
 	// user.ID             // returns inserted data's primary key
 	// result.Error        // returns error
 	// result.RowsAffected // returns inserted records count
-	for rec := range records {
-		gdb.Create(&rec)
+
+	log.Println(r)
+	result := gdb.Create(r)
+	if result.Error != nil {
+		log.Printf("Error: %v", result.Error)
 	}
+	log.Printf("gorm: data: %v rows affected %v", r, result.RowsAffected)
 }

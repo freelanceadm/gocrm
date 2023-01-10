@@ -21,6 +21,8 @@
 * add DB connection
 
 # Database
+
+## Create tables manually
 !!! Postgres suggest use TEXT and NOT VARCHAR ( varchar is deprecated )
 ```
 CREATE TABLE "users" (
@@ -37,6 +39,22 @@ CREATE INDEX ON "users" ("email");
 
 COMMENT ON COLUMN "users"."password" IS 'password hash';
 ```
+
+## Create tables using GORM
+
+We use GORM to reuse existing connection to database. 
+
+Simply reuse DB connection and call auto migration. 
+Example: 
+```
+	// Get a database handle.
+	db = t_sql.ConnectDB()        // *sql.DB
+	gdb = t_sql.GormConnectDB(db) // *gorm.DB
+
+	// Migrate schema(s)
+	gdb.AutoMigrate(&t_model.User{})   // One model. Otherwise its hungs up. Or may by does not run commit at the end of SQL request
+  gdb.AutoMigrate(&t_model.Album{})  // 
+``` 
 
 ## DB migration
 Utility https://gorm.io/docs/migration.html

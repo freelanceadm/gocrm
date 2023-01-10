@@ -13,7 +13,7 @@ var (
 // Install viper
 // go get github.com/spf13/viper
 func ReadConfig() error {
-	viper.AddConfigPath("./config")
+	viper.AddConfigPath("./pkg/config")
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 

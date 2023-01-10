@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"wcrm2/config"
 	t_model "wcrm2/model"
 	t_sql "wcrm2/pkg/client/postgresclient"
+	"wcrm2/pkg/config"
 	"wcrm2/router/gmax"
 
 	"gorm.io/gorm"
@@ -31,19 +31,25 @@ func init() {
 	gdb = t_sql.GormConnectDB(db)
 
 	// Migrate schema(s)
-	gdb.AutoMigrate(&t_model.User{}, &t_model.Album{})
+	gdb.AutoMigrate(&t_model.User{})
+	gdb.AutoMigrate(&t_model.Album{})
 
-	// router and handlers
-	s := gmax.S
-	s.StartServer()
 }
 
 func main() {
 	// check DB connection and schema
-	checkDB()
+	//checkDB()
 
-	// start http server
+	user := t_model.User{
+		Email:        "mail1@mail.ru",
+		PasswordHash: "$1$dkjfngkjrnktjngkrjntgkjrntkj",
+	}
+	t_sql.GormCreateOne(gdb, &user)
+	//gdb.Create(&user)
 
+	// Start web server
+	s := gmax.S
+	s.StartServer()
 }
 
 // Check db and tables exist with required data
