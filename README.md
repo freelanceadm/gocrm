@@ -71,3 +71,25 @@ type Users struct {
   PasswordHash  string
 }
 ```
+
+# API
+## CRUD in database using GORM
+```
+	// insert multiple records
+	t_sql.GormCreateBatch(gdb, &users)
+
+	// insert one record
+	t_sql.GormCreateOne(gdb, &user)
+
+	// get one record
+	record, _ := t_sql.GormGetByID(gdb, &t_model.User{}, "1")
+	log.Println(record)
+
+	// Get all records
+	res := []t_model.User{}
+	err := t_sql.GormGetAll(gdb, t_model.User{}, &res)
+	log.Println(err)
+	log.Println("allrecords: ", res)
+
+  // TODO: update and delete
+```

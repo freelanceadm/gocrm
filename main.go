@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	t_model "wcrm2/model"
 	t_sql "wcrm2/pkg/client/postgresclient"
@@ -31,8 +32,8 @@ func init() {
 	gdb = t_sql.GormConnectDB(db)
 
 	// Migrate schema(s)
-	gdb.AutoMigrate(&t_model.User{})
 	gdb.AutoMigrate(&t_model.Album{})
+	gdb.Debug().AutoMigrate(&t_model.User{})
 
 }
 
@@ -41,17 +42,29 @@ func main() {
 	//checkDB()
 
 	user := t_model.User{
-		Email:        "mail1@mail.ru",
-		PasswordHash: "$1$dkjfngkjrnktjngkrjntgkjrntkj",
+		ID:        0,
+		Nickname:  "U1",
+		Email:     "mail1@mail.ru",
+		Password:  "$1$dkjfngkjrnktjngkrjntgkjrntkj",
+		CreatedAt: time.Time{},
+		UpdatedAt: time.Time{},
 	}
 	users := []t_model.User{
 		{
-			Email:        "mail2@mail.ru",
-			PasswordHash: "$1$dkjfngkjrnktjngkrjntgkjrntkj",
+			ID:        0,
+			Nickname:  "U2",
+			Email:     "mail2@mail.ru",
+			Password:  "$1$dkjfngkjrnktjngkrjntgkjrntkj",
+			CreatedAt: time.Time{},
+			UpdatedAt: time.Time{},
 		},
 		{
-			Email:        "mail3@mail.ru",
-			PasswordHash: "$1$dkjfngkjrnktjngkrjntgkjrntkj",
+			ID:        0,
+			Nickname:  "U3",
+			Email:     "mail3@mail.ru",
+			Password:  "$1$dkjfngkjrnktjngkrjntgkjrntkj",
+			CreatedAt: time.Time{},
+			UpdatedAt: time.Time{},
 		},
 		user,
 	}
@@ -60,6 +73,16 @@ func main() {
 	t_sql.GormCreateBatch(gdb, &users)
 	// insert one record
 	t_sql.GormCreateOne(gdb, &user)
+	// get one record
+	record, _ := t_sql.GormGetByID(gdb, &t_model.User{}, "1")
+	log.Println(record)
+
+	// Get all records
+	res := []t_model.User{}
+	err := t_sql.GormGetAll(gdb, t_model.User{}, &res)
+	log.Println(err)
+	log.Println("allrecords: ", res)
+
 	// update record
 	// delete
 
